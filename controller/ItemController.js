@@ -37,4 +37,32 @@ export default class ItemController {
             }
         })
     }
+
+    deleteItem(req, res, next) {
+        const newItem = new Item();
+        newItem.id = req.params.id;
+
+        Item.remove({id: newItem.id}, (err, result) => {
+            if (err) {
+                next(err);
+            } else {
+                res.send('ok');
+            }
+        })
+    }
+
+    modifyItem(req, res, next) {
+        const newItem = new Item();
+        newItem.id = req.params.id;
+        newItem.name = req.body.name;
+        newItem.category = req.body.category;
+
+        Item.update({id: newItem.id}, {$set: {name: newItem.name, category: newItem.category}}, (err, result) => {
+            if (err) {
+                next(err);
+            } else {
+                res.send(result);
+            }
+        })
+    }
 }
