@@ -1,4 +1,5 @@
 const Category = require('../models/category');
+const Item = require('../models/item');
 
 export default class categoryController {
     getAll(req, res, next) {
@@ -35,23 +36,67 @@ export default class categoryController {
 
     deleteCategory(req, res, next) {
         const id = req.params.id;
-        Category.remove({id}, (err, result) => {
+        let category;
+        Category.find({id}, (err, result) => {
             if (err) {
                 return next(err);
             } else {
-                res.send('ok');
+                category = result[0].category;
             }
-        })
+
+            Category.remove({id}, (err, result) => {
+                if (err) {
+                    return next(err);
+                } else {
+                    Item.find({category}, (err, result) => {
+                        if (err) {
+                            return next(err);
+                        } else {
+                            result.forEach(item => {
+                                Item.remove({category}, (err, result) => {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                    res.send('ok');
+                }
+            })
+        });
     }
 
     modifyCategory(req, res, next) {
         const id = req.params.id;
         const newCategory = {category: req.body.category};
+        let oldCategory;
+        Category.find({id}, (err, result) => {
+            if (err) {
+                return next(err);
+            } else {
+                oldCategory = result[0].category;
+            }
+        });
 
         Category.update({id}, {$set: newCategory}, (err, result) => {
             if (err) {
                 return next(err);
             } else {
+                Item.find({category: oldCategory}, (err, result) => {
+                    if (err) {
+                        return next(err);
+                    } else {
+                        result.forEach(item => {
+                            Item.update({category: oldCategory}, {$set: newCategory}, (err, result) => {
+                                if (err) {
+                                    return next(err);
+                                }
+                            });
+                        });
+                    }
+                });
+
                 res.send(result);
             }
         })
