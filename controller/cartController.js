@@ -1,5 +1,4 @@
 const Cart = require('../models/cart');
-const Item = require('../models/item');
 
 export default class CartController {
     getAll(req, res, next) {
