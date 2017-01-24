@@ -13,8 +13,8 @@ export default class ItemController {
 
     getOne(req, res, next) {
         const newItem = new Item();
-        newItem.id = req.params.id;
-        Item.find({id: newItem.id}, (err, result) => {
+        newItem.itemId = req.params.itemId;
+        Item.find({itemId: newItem.itemId}, (err, result) => {
             if (err) {
                 return next(err);
             } else {
@@ -25,11 +25,11 @@ export default class ItemController {
 
     saveItem(req, res, next) {
         const newItem = new Item();
-        newItem.id = req.body.id;
+        newItem.itemId = req.body.itemId;
         newItem.name = req.body.name;
         newItem.category = req.body.category;
 
-        Item.create({id: newItem.id, name: newItem.name, category: newItem.category}, (err, result) => {
+        Item.create({itemId: newItem.itemId, name: newItem.name, category: newItem.category}, (err, result) => {
             if (err) {
                 next(err);
             } else {
@@ -40,9 +40,9 @@ export default class ItemController {
 
     deleteItem(req, res, next) {
         const newItem = new Item();
-        newItem.id = req.params.id;
+        newItem.itemId = req.params.itemId;
 
-        Item.remove({id: newItem.id}, (err, result) => {
+        Item.remove({itemId: newItem.itemId}, (err, result) => {
             if (err) {
                 next(err);
             } else {
@@ -53,11 +53,16 @@ export default class ItemController {
 
     modifyItem(req, res, next) {
         const newItem = new Item();
-        newItem.id = req.params.id;
+        newItem.itemId = req.params.itemId;
         newItem.name = req.body.name;
         newItem.category = req.body.category;
 
-        Item.update({id: newItem.id}, {$set: {name: newItem.name, category: newItem.category}}, (err, result) => {
+        Item.update({itemId: newItem.itemId}, {
+            $set: {
+                name: newItem.name,
+                category: newItem.category
+            }
+        }, (err, result) => {
             if (err) {
                 next(err);
             } else {
