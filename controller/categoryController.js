@@ -1,5 +1,6 @@
 const Category = require('../models/category');
 const Item = require('../models/item');
+import async from 'async';
 
 export default class categoryController {
     getAll(req, res, next) {
@@ -36,56 +37,76 @@ export default class categoryController {
 
     deleteCategory(req, res, next) {
         const id = req.params.id;
-        let category;
-        Category.find({id}, (err, result) => {
-            if (err) {
-                return next(err);
-            } else {
-                category = result[0].category;
-            }
-
-            Category.remove({id}, (err, result) => {
-                if (err) {
-                    return next(err);
-                } else {
-                    Item.find({category}, (err, result) => {
-                        if (err) {
-                            return next(err);
-                        } else {
-                            result.forEach(item => {
-                                Item.remove({category}, (err, result) => {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                });
+        async.waterfall([
+            (done) => {
+                Category.find({id}, (err, result) => {
+                    if (err) {
+                        done(err, null);
+                    } else {
+                        done(null, result[0].category);
+                    }
+                });
+            },
+            (category, done) => {
+                Category.remove({category}, (err, result) => {
+                    if (err) {
+                        done(err, null);
+                    } else {
+                        done(null, category);
+                    }
+                })
+            },
+            (category, done) => {
+                Item.find({category}, (err, result) => {
+                    if (err) {
+                        done(err, null);
+                    } else {
+                        result.forEach(item => {
+                            Item.remove({category}, (err, result) => {
+                                if (err) {
+                                    return next(err);
+                                }
                             });
-                        }
-                    });
-                    res.send('ok');
-                }
-            })
-        });
+                        });
+                        done(null, null);
+                    }
+                });
+            },
+            (done) => {
+                res.send('deleted');
+            }
+        ]);
     }
 
     modifyCategory(req, res, next) {
         const id = req.params.id;
         const newCategory = {category: req.body.category};
         let oldCategory;
-        Category.find({id}, (err, result) => {
-            if (err) {
-                return next(err);
-            } else {
-                oldCategory = result[0].category;
-            }
-        });
 
-        Category.update({id}, {$set: newCategory}, (err, result) => {
-            if (err) {
-                return next(err);
-            } else {
+        async.waterfall([
+            (done) => {
+                Category.find({id}, (err, result) => {
+                    if (err) {
+                        done(err, null);
+                    } else {
+                        oldCategory = result[0].category;
+                        done(null, oldCategory);
+                    }
+                });
+            },
+            (oldCategory, done) => {
+                Category.update({id}, {$set: newCategory}, (err, result) => {
+                    if (err) {
+                        done(err, null);
+                    } else {
+                        done(null, oldCategory);
+                    }
+                })
+            },
+            (oldCategory, done) => {
                 Item.find({category: oldCategory}, (err, result) => {
                     if (err) {
-                        return next(err);
+                        done(err, null);
                     } else {
                         result.forEach(item => {
                             Item.update({category: oldCategory}, {$set: newCategory}, (err, result) => {
@@ -94,11 +115,13 @@ export default class categoryController {
                                 }
                             });
                         });
+                        done(null, null);
                     }
                 });
-
-                res.send(result);
+            },
+            (done) => {
+                res.send('mondified successfully!');
             }
-        })
+        ]);
     }
 }
