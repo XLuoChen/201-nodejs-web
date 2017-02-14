@@ -4,126 +4,76 @@ const async = require('async');
 
 class CategoryController {
   getAll(req, res, next) {
-    Category.find({}, (err, result) => {
+    async.series({
+      items: (cb) => {
+        Category.find({}, cb);
+      },
+      totalCount: (cb) => {
+        Category.count(cb);
+      }
+    }, (err, result) => {
       if (err) {
         return next(err);
-      } else {
-        res.json(result);
       }
-    })
+      return res.status(200).send(result);
+    });
   }
 
   getOne(req, res, next) {
-    const id = req.params.id;
-    console.log(id);
-    Category.find({'_id': id}, (err, result) => {
+    const categoryId = req.params.categoryId;
+    Category.findById(categoryId, (err, result) => {
       if (err) {
         return next(err);
       } else {
-        res.json(result);
+        return res.status(200).send(result);
       }
     })
   }
 
   saveCategory(req, res, next) {
-    const category = {category: req.body.category};
-    Category.create(category, (err, result) => {
+    Category.create(req.body, (err, result) => {
       if (err) {
         return next(err);
       } else {
-        res.send('create successfully!');
+        return res.status(201).send(result._id);
       }
     })
   }
 
   deleteCategory(req, res, next) {
-    const id = req.params.id;
+    const category = req.params.categoryId;
     async.waterfall([
       (done) => {
-        Category.findOne(id, (err, result) => {
-          if (err) {
-            done(err, null);
-          } else {
-            done(null, result[0].category);
-          }
-        });
+        Item.find({category}, done);
       },
-      (category, done) => {
-        Category.remove({category}, (err, result) => {
-          if (err) {
-            done(err, null);
-          } else {
-            done(null, category);
-          }
-        })
-      },
-      (category, done) => {
-        Item.find({category}, (err, result) => {
-          if (err) {
-            done(err, null);
-          } else {
-            result.forEach(item => {
-              Item.remove({category}, (err, result) => {
-                if (err) {
-                  return next(err);
-                }
-              });
-            });
-            done(null, null);
-          }
-        });
-      },
-      (done) => {
-        res.send('deleted');
+      (data, done) => {
+        if (data) {
+          done(true, null);
+        } else {
+          done(err, null);
+        }
+      }], (err) => {
+      if (err === true) {
+        return res.sendStatus(403);
       }
-    ]);
+      if (err) {
+        return next(err);
+      }
+      return res.sendStatus(204);
+    });
   }
 
   modifyCategory(req, res, next) {
-    const id = req.params.id;
-    const newCategory = {category: req.body.category};
-    let oldCategory;
-
-    async.waterfall([
-      (done) => {
-        Category.find({'_id': id}, (err, result) => {
-          if (err) {
-            done(err, null);
-          } else {
-            oldCategory = result[0].category;
-            done(null, oldCategory);
-          }
-        });
-      },
-      (oldCategory, done) => {
-        Category.update({id}, {$set: newCategory}, (err, result) => {
-          if (err) {
-            done(err, null);
-          } else {
-            done(null, oldCategory);
-          }
-        })
-      },
-      (oldCategory, done) => {
-        Item.find({category: oldCategory}, (err, result) => {
-          if (err) {
-            done(err, null);
-          } else {
-            result.forEach(item => {
-              Item.update({category: oldCategory}, {$set: newCategory}, (err, result) => {
-                if (err) {
-                  return next(err);
-                }
-              });
-            });
-            done(null, null);
-          }
-        });
-      },
-      (done) => {
-        res.send('mondified successfully!');
+    const categoryId = req.params.categoryId;
+    Category.findOneAndUpdate({'_id': categoryId}, req.body, (err, doc) => {
+      if (err) {
+        return next(err);
       }
-    ]);
+      if (!doc) {
+        return res.sendStatus(404);
+      }
+      return res.sendStatus(204);
+    });
   }
 }
 

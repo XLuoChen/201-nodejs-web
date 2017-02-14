@@ -5,9 +5,9 @@ const router = Router();
 const categoryCtrl = new categoryController();
 
 router.get('/', categoryCtrl.getAll);
-router.get('/:id', categoryCtrl.getOne);
+router.get('/:categoryId', categoryCtrl.getOne);
 router.post('/', categoryCtrl.saveCategory);
-router.delete('/:id', categoryCtrl.deleteCategory);
-router.put('/:id', categoryCtrl.modifyCategory);
+router.delete('/:categoryId', categoryCtrl.deleteCategory);
+router.put('/:categoryId', categoryCtrl.modifyCategory);
 
 module.exports = router;
