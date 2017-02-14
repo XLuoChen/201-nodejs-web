@@ -1,5 +1,5 @@
-import {Router} from 'express';
-import ItemController from '../../controller/ItemController';
+const {Router}=require('express');
+const ItemController = require('../../controller/ItemController');
 
 
 const router = Router();
@@ -11,4 +11,4 @@ router.post('/', itemCtrl.saveItem);
 router.delete('/:itemId', itemCtrl.deleteItem);
 router.put('/:itemId', itemCtrl.modifyItem);
 
-export default router;
+module.exports = router;

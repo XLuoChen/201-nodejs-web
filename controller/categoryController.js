@@ -1,8 +1,8 @@
 const Category = require('../models/category');
 const Item = require('../models/item');
-import async from 'async';
+const async = require('async');
 
-export default class categoryController {
+class CategoryController {
   getAll(req, res, next) {
     Category.find({}, (err, result) => {
       if (err) {
@@ -16,7 +16,7 @@ export default class categoryController {
   getOne(req, res, next) {
     const id = req.params.id;
     console.log(id);
-    Category.find({'_id':id}, (err, result) => {
+    Category.find({'_id': id}, (err, result) => {
       if (err) {
         return next(err);
       } else {
@@ -126,3 +126,5 @@ export default class categoryController {
     ]);
   }
 }
+
+module.exports = CategoryController;

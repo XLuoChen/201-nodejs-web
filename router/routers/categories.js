@@ -1,7 +1,7 @@
-import {Router} from 'express';
-import categoryController from '../../controller/categoryController';
+const {Router}=require('express');
+const categoryController = require('../../controller/categoryController');
 
-const router = new Router();
+const router = Router();
 const categoryCtrl = new categoryController();
 
 router.get('/', categoryCtrl.getAll);
@@ -10,4 +10,4 @@ router.post('/', categoryCtrl.saveCategory);
 router.delete('/:id', categoryCtrl.deleteCategory);
 router.put('/:id', categoryCtrl.modifyCategory);
 
-export default router;
+module.exports = router;

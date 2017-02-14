@@ -1,6 +1,6 @@
 const Item = require('../models/item');
 
-export default class ItemController {
+class ItemController {
   getAll(req, res, next) {
     Item.find({}, (err, result) => {
       if (err) {
@@ -71,3 +71,5 @@ export default class ItemController {
     })
   }
 }
+
+module.exports = ItemController;
