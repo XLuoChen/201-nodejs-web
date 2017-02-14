@@ -1,74 +1,76 @@
 const Item = require('../models/item');
+const async = require('async');
 
 class ItemController {
   getAll(req, res, next) {
-    Item.find({}, (err, result) => {
+    async.series({
+      items: (cb) => {
+        Item.find({})
+          .populate('category')
+          .exec(cb);
+      },
+      totalCount: (cb) => {
+        Item.count(cb);
+      }
+    }, (err, result) => {
       if (err) {
         return next(err);
-      } else {
-        res.send(result);
       }
+      return res.status(200).send(result);
     });
+
   }
 
   getOne(req, res, next) {
-    const newItem = new Item();
-    newItem.itemId = req.params.itemId;
-    Item.find({'_id': newItem.itemId}, (err, result) => {
+    const itemId = req.params.itemId;
+    Item.find({'_id': itemId}, (err, result) => {
       if (err) {
         return next(err);
       } else {
-        res.send(result);
+        return res.send(result[0]);
       }
     })
   }
 
   saveItem(req, res, next) {
-    const newItem = new Item();
-    newItem.itemId = req.body.itemId;
-    newItem.name = req.body.name;
-    newItem.category = req.body.category;
-
-    Item.create({name: newItem.name, category: newItem.category}, (err, result) => {
+    Item.create(req.body, (err, doc) => {
       if (err) {
         next(err);
       } else {
-        res.send('ok');
+        return res.status(201).send({uri: `items/${doc._id}`});
       }
     })
   }
 
   deleteItem(req, res, next) {
-    const newItem = new Item();
-    newItem.itemId = req.params.itemId;
+    const itemId = req.params.itemId;
 
-    Item.remove({'_id': newItem.itemId}, (err, result) => {
+    Item.findOneAndRemove({'_id': itemId}, (err, doc) => {
       if (err) {
         next(err);
-      } else {
-        res.send('ok');
+      }
+      if (!doc) {
+        return res.sendStatus(404);
+      }
+      else {
+        return res.sendStatus(204);
       }
     })
   }
 
   modifyItem(req, res, next) {
-    const newItem = new Item();
-    newItem.itemId = req.params.itemId;
-    newItem.name = req.body.name;
-    newItem.category = req.body.category;
-
-    Item.update({'_id': newItem.itemId}, {
-      $set: {
-        name: newItem.name,
-        category: newItem.category
-      }
-    }, (err, result) => {
+    const itemId = req.params.itemId;
+    Item.findOneAndUpdate({'_id': itemId}, req.body, (err, doc) => {
       if (err) {
-        next(err);
-      } else {
-        res.send(result);
+        return next(err);
       }
-    })
+      if (!doc) {
+        return res.sendStatus(404);
+      }
+      else {
+        return res.sendStatus(204);
+      }
+    });
   }
 }
 
