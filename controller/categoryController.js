@@ -50,7 +50,7 @@ class CategoryController {
         if (data) {
           done(true, null);
         } else {
-          done(err, null);
+          Category.findOneAndRemove({'_id': category}, done)
         }
       }], (err) => {
       if (err === true) {
