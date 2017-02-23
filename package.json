@@ -6,7 +6,8 @@
   "scripts": {
     "babel-node": "babel-node",
     "start": "nodemon --exec npm run babel-node -- app.js",
-    "test": "./node_modules/.bin/mocha spec/*spec.js"
+    "refreshMongo":"babel-node ./tool/mongo-tool.js",
+    "test": "mocha --recursive spec/"
   },
   "author": "",
   "license": "ISC",
