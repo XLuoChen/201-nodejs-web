@@ -1,5 +1,6 @@
-const Cart = require('../models/cart');
+const Cart = require('../model/cart');
 const async = require('async');
+const constant = require('../config/constant');
 
 const loadItemUri = function (items) {
   return items.map(({count, item}) => {
@@ -28,7 +29,7 @@ class CartController {
       if (err) {
         return next(err);
       }
-      return res.status(200).send(result);
+      return res.status(constant.httpCode.OK).send(result);
     })
   }
 
@@ -45,7 +46,7 @@ class CartController {
       else {
         const data = doc.toJSON();
         data.items = loadItemUri(data.items);
-        return res.status(200).send(data);
+        return res.status(constant.httpCode.OK).send(data);
       }
     })
   }
@@ -56,7 +57,7 @@ class CartController {
       if (err) {
         return next(err);
       } else {
-        return res.status(201).send({uri: `carts/${result._id}`});
+        return res.status(constant.httpCode.CREATED).send({uri: `carts/${result._id}`});
       }
     });
   }
@@ -68,10 +69,10 @@ class CartController {
         return next(err);
       }
       if (!result) {
-        return res.sendStatus(404);
+        return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
       else {
-        return res.sendStatus(204);
+        return res.sendStatus(constant.httpCode.NO_CONTENT);
       }
     });
   }
@@ -84,10 +85,10 @@ class CartController {
         return next(err);
       }
       if (!result) {
-        return res.sendStatus(404);
+        return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
       else {
-        return res.sendStatus(204);
+        return res.sendStatus(constant.httpCode.NO_CONTENT);
       }
     });
   }

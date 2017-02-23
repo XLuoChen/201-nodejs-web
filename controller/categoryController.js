@@ -1,6 +1,7 @@
-const Category = require('../models/category');
-const Item = require('../models/item');
+const Category = require('../model/category');
+const Item = require('../model/item');
 const async = require('async');
+const constant = require('../config/constant');
 
 class CategoryController {
   getAll(req, res, next) {
@@ -15,7 +16,7 @@ class CategoryController {
       if (err) {
         return next(err);
       }
-      return res.status(200).send(result);
+      return res.status(constant.httpCode.OK).send(result);
     });
   }
 
@@ -25,7 +26,7 @@ class CategoryController {
       if (err) {
         return next(err);
       } else {
-        return res.status(200).send(result);
+        return res.status(constant.httpCode.OK).send(result);
       }
     })
   }
@@ -35,7 +36,7 @@ class CategoryController {
       if (err) {
         return next(err);
       } else {
-        return res.status(201).send(result._id);
+        return res.status(constant.httpCode.CREATED).send(result._id);
       }
     })
   }
@@ -54,12 +55,12 @@ class CategoryController {
         }
       }], (err) => {
       if (err === true) {
-        return res.sendStatus(403);
+        return res.sendStatus(constant.httpCode.BAD_REQUEST);
       }
       if (err) {
         return next(err);
       }
-      return res.sendStatus(204);
+      return res.sendStatus(constant.httpCode.NO_CONTENT);
     });
   }
 
@@ -70,9 +71,9 @@ class CategoryController {
         return next(err);
       }
       if (!doc) {
-        return res.sendStatus(404);
+        return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
-      return res.sendStatus(204);
+      return res.sendStatus(constant.httpCode.NO_CONTENT);
     });
   }
 }

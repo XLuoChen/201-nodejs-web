@@ -2,7 +2,7 @@ require('should');
 const supertest = require('supertest');
 const app = require('../app');
 const request = supertest(app);
-const Item = require('../models/item');
+const Item = require('../model/item');
 const refresh = require('../tool/refreshMongo');
 
 describe('ItemController', () => {

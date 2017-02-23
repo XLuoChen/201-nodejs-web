@@ -1,5 +1,6 @@
-const Item = require('../models/item');
+const Item = require('../model/item');
 const async = require('async');
+const constant = require('../config/constant');
 
 class ItemController {
   getAll(req, res, next) {
@@ -16,7 +17,7 @@ class ItemController {
       if (err) {
         return next(err);
       }
-      return res.status(200).send(result);
+      return res.status(constant.httpCode.OK).send(result);
     });
 
   }
@@ -27,7 +28,7 @@ class ItemController {
       if (err) {
         return next(err);
       } else {
-        return res.send(result[0]);
+        return res.status(constant.httpCode.OK).send(result[0]);
       }
     })
   }
@@ -37,7 +38,7 @@ class ItemController {
       if (err) {
         next(err);
       } else {
-        return res.status(201).send({uri: `items/${doc._id}`});
+        return res.status(constant.httpCode.CREATED).send({uri: `items/${doc._id}`});
       }
     })
   }
@@ -50,10 +51,10 @@ class ItemController {
         next(err);
       }
       if (!doc) {
-        return res.sendStatus(404);
+        return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
       else {
-        return res.sendStatus(204);
+        return res.sendStatus(constant.httpCode.NO_CONTENT);
       }
     })
   }
@@ -65,10 +66,10 @@ class ItemController {
         return next(err);
       }
       if (!doc) {
-        return res.sendStatus(404);
+        return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
       else {
-        return res.sendStatus(204);
+        return res.sendStatus(constant.httpCode.NO_CONTENT);
       }
     });
   }

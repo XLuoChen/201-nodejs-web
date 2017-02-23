@@ -3,7 +3,7 @@ const app = require('../app');
 const request = supertest(app);
 
 const refresh = require('../tool/refreshMongo');
-const Category = require('../models/category');
+const Category = require('../model/category');
 
 describe('CategoryController', () => {
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe('CategoryController', () => {
   it('DELETE /categories/:category',(done)=>{
     request
       .delete('/categories/587f0f2586653d19297d40c8')
-      .expect(403)
+      .expect(400)
       .end(done);
   });
 
