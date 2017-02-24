@@ -56,40 +56,35 @@ class CartController {
     Cart.create(req.body, (err, result) => {
       if (err) {
         return next(err);
-      } else {
-        return res.status(constant.httpCode.CREATED).send({uri: `carts/${result._id}`});
       }
+      return res.status(constant.httpCode.CREATED).send({uri: `carts/${result._id}`});
     });
   }
 
   deleteCart(req, res, next) {
     const cartId = req.params.cartId;
-    Cart.findOneAndRemove({'_id': cartId}, (err, result) => {
+    Cart.findByIdAndRemove(cartId, (err, result) => {
       if (err) {
         return next(err);
       }
       if (!result) {
         return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
-      else {
-        return res.sendStatus(constant.httpCode.NO_CONTENT);
-      }
+      return res.sendStatus(constant.httpCode.NO_CONTENT);
     });
   }
 
   modifyCart(req, res, next) {
     const cartId = req.params.cartId;
-
-    Cart.findByIdAndUpdate(cartId, req.body, (err, result) => {
+    console.log(req.body)
+    Cart.findOneAndUpdate(cartId, req.body, (err, result) => {
       if (err) {
         return next(err);
       }
       if (!result) {
         return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
-      else {
-        return res.sendStatus(constant.httpCode.NO_CONTENT);
-      }
+      return res.sendStatus(constant.httpCode.NO_CONTENT);
     });
   }
 }

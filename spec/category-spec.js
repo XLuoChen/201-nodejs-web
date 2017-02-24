@@ -1,15 +1,11 @@
+require('should');
 const supertest = require('supertest');
 const app = require('../app');
 const request = supertest(app);
 
-const refresh = require('../tool/refreshMongo');
 const Category = require('../model/category');
 
 describe('CategoryController', () => {
-  beforeEach(() => {
-    refresh();
-  });
-
   it('GET /categories', (done) => {
     request
       .get('/categories')
@@ -34,9 +30,9 @@ describe('CategoryController', () => {
       .end(done);
   });
 
-  it('POST /categories',(done)=>{
+  it('POST /categories', (done) => {
     const categories = {
-      name:'food'
+      name: 'food'
     };
 
     request
@@ -51,14 +47,14 @@ describe('CategoryController', () => {
       .end(done);
   });
 
-  it('DELETE /categories/:category',(done)=>{
+  it('DELETE /categories/:category', (done) => {
     request
       .delete('/categories/587f0f2586653d19297d40c8')
       .expect(400)
       .end(done);
   });
 
-  it('PUT /categories/:category',(done)=>{
+  it('PUT /categories/:category', (done) => {
     const category = {
       name: 'drink'
     };

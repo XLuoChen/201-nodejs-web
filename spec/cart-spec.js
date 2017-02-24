@@ -1,16 +1,12 @@
 require('should');
+const express = require('express');
 const supertest = require('supertest');
 const app = require('../app');
 const request = supertest(app);
 
-const refresh = require('../tool/refreshMongo');
 const Cart = require('../model/cart');
 
 describe('CartController', () => {
-  beforeEach(() => {
-    refresh();
-  });
-
   it('/GET /carts', (done) => {
     request
       .get('/carts')
@@ -62,8 +58,8 @@ describe('CartController', () => {
       .send(cart)
       .expect(201)
       .expect((res) => {
-        Cart.findOne(cart, (err, doc) => {
-          res.body.uri.should.equal(doc._id);
+        Cart.findOne({userId: '2'}, (err, doc) => {
+          res.body.uri.should.equal(`carts/${doc._id}`);
         });
       })
       .end(done);

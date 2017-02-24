@@ -24,13 +24,16 @@ class ItemController {
 
   getOne(req, res, next) {
     const itemId = req.params.itemId;
-    Item.find({'_id': itemId}, (err, result) => {
-      if (err) {
-        return next(err);
-      } else {
-        return res.status(constant.httpCode.OK).send(result[0]);
-      }
-    })
+    Item.findById(itemId)
+      .populate('category')
+      .exec((err, result) => {
+        if (err) {
+          return next(err);
+        } else {
+          return res.status(constant.httpCode.OK).send(result);
+        }
+
+      })
   }
 
   saveItem(req, res, next) {
@@ -61,16 +64,14 @@ class ItemController {
 
   modifyItem(req, res, next) {
     const itemId = req.params.itemId;
-    Item.findOneAndUpdate({'_id': itemId}, req.body, (err, doc) => {
+    Item.findOneAndUpdate(itemId, req.body, (err, doc) => {
       if (err) {
         return next(err);
       }
       if (!doc) {
         return res.sendStatus(constant.httpCode.NOT_FOUND);
       }
-      else {
-        return res.sendStatus(constant.httpCode.NO_CONTENT);
-      }
+      return res.sendStatus(constant.httpCode.NO_CONTENT);
     });
   }
 }

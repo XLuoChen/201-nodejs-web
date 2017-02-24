@@ -3,13 +3,8 @@ const supertest = require('supertest');
 const app = require('../app');
 const request = supertest(app);
 const Item = require('../model/item');
-const refresh = require('../tool/refreshMongo');
 
 describe('ItemController', () => {
-  beforeEach(() => {
-    refresh();
-  });
-
   it('GET /items', (done) => {
     request
       .get('/items')
@@ -29,7 +24,11 @@ describe('ItemController', () => {
           "_id": "587f0f2586653d19297d40c2",
           "name": "钢笔",
           "price": 12,
-          "category": "587f0f2586653d19297d40c8",
+          "category": {
+            "_id": "587f0f2586653d19297d40c8",
+            "name": "drink",
+            "__v": 0
+          },
           "__v": 0
         });
       })

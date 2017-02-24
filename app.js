@@ -20,10 +20,10 @@ app.get('/', (req, res) => {
   })
 })
 
-router(app);
-
 app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(bodyParser.json());
+router(app);
 
 app.listen(config.get('httpPort'), () => {
   console.log('server started at http://localhost:' + config.get('httpPort'));   // eslint-disable-line no-console
