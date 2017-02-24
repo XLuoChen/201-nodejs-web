@@ -29,6 +29,7 @@ describe('CartController', () => {
       .expect((res) => {
         res.body.should.eql({
           "_id": "587f0f2586653d19297d40c6",
+          "userId": "1",
           "__v": 0,
           "items": [{
             "uri": "items/587f0f2586653d19297d40c2",

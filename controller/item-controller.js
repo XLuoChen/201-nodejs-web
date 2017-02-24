@@ -46,7 +46,7 @@ class ItemController {
   deleteItem(req, res, next) {
     const itemId = req.params.itemId;
 
-    Item.findOneAndRemove({'_id': itemId}, (err, doc) => {
+    Item.findByIdAndRemove(itemId, (err, doc) => {
       if (err) {
         next(err);
       }

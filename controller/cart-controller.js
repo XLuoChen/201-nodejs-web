@@ -80,7 +80,7 @@ class CartController {
   modifyCart(req, res, next) {
     const cartId = req.params.cartId;
 
-    Cart.update({'_id': cartId}, {$set: req.body}, (err, result) => {
+    Cart.findByIdAndUpdate(cartId, req.body, (err, result) => {
       if (err) {
         return next(err);
       }
