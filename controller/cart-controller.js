@@ -76,8 +76,7 @@ class CartController {
 
   modifyCart(req, res, next) {
     const cartId = req.params.cartId;
-    console.log(req.body)
-    Cart.findOneAndUpdate(cartId, req.body, (err, result) => {
+    Cart.findByIdAndUpdate(cartId, req.body, (err, result) => {
       if (err) {
         return next(err);
       }

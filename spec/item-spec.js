@@ -54,13 +54,6 @@ describe('ItemController', () => {
       .end(done);
   });
 
-  it('DELETE /items/:itemId', (done) => {
-    request
-      .delete('/items/587f0f2586653d19297d40c2')
-      .expect(204)
-      .end(done);
-  });
-
   it('PUT /items/:itemId', (done) => {
     const item = {
       name: 'eraser',
@@ -70,6 +63,13 @@ describe('ItemController', () => {
     request
       .put('/items/587f0f2586653d19297d40c2')
       .send(item)
+      .expect(204)
+      .end(done);
+  });
+
+  it('DELETE /items/:itemId', (done) => {
+    request
+      .delete('/items/587f0f2586653d19297d40c2')
       .expect(204)
       .end(done);
   });

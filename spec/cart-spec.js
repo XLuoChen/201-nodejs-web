@@ -65,13 +65,6 @@ describe('CartController', () => {
       .end(done);
   });
 
-  it('DELETE /carts/:cartId', (done) => {
-    request
-      .delete('/carts/587f0f2586653d19297d40c6')
-      .expect(204)
-      .end(done);
-  });
-
   it('PUT /carts/:cartId', (done) => {
     const cart = {
       userId: '9',
@@ -86,6 +79,13 @@ describe('CartController', () => {
     request
       .put('/carts/587f0f2586653d19297d40c6')
       .send(cart)
+      .expect(204)
+      .end(done);
+  });
+
+  it('DELETE /carts/:cartId', (done) => {
+    request
+      .delete('/carts/587f0f2586653d19297d40c6')
       .expect(204)
       .end(done);
   });
